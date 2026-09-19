@@ -2,7 +2,7 @@
 
 // This script adds additional metadata to the player, such as release date and play count.
 (async function playerMetadata() {
-    if (!Spicetify.Player || !Spicetify.React || !Spicetify.ReactDOM || !Spicetify.Platform || !Spicetify.GraphQL) {
+    if (!Spicetify.Player.data || !Spicetify.React || !Spicetify.ReactDOM || !Spicetify.Platform || !Spicetify.GraphQL) {
         setTimeout(playerMetadata, 300)
         return
     }
@@ -44,8 +44,9 @@ function clog(level, message) {
 function createPlaycountElements(data, uri) {
     clog(levels.log, "Creating Metadata elements...")
     const artistFieldMetadata = document.querySelector(".main-trackInfo-artists")
-    const artistFieldMetadataText = artistFieldMetadata?.querySelector(".e-91000-text")
-
+    // sneaky bastards at spotify changed the text class from e-91000-text             
+    // const artistFieldMetadataText = artistFieldMetadata?.querySelector(".e-91000-text")
+    const artistFieldMetadataText = artistFieldMetadata?.querySelector(".e-10451-text")
 
     if (!artistFieldMetadata || !artistFieldMetadataText) {
         clog(levels.error, "grabbing elements again...")
@@ -205,7 +206,10 @@ async function main() {
 
     clog(levels.log, `Separator: ${sep}, Plays Icon: ${playsIcon}`)
     // dispatch dummy event for onload
-    const playerState = Spicetify.Platform.PlayerAPI.getState()
+    //const playerState = Spicetify.Platform.PlayerAPI.getState()
+    // use Spicetify.Player.data instead 
+    const playerState = Spicetify.Player.data
+
     createPlaycountElements(await getGraphQlAlbumData(playerState.item.album.uri), playerState.item.uri)
     createNpvMetadataElements(extractArtistStats(await getNpvArtistData(playerState.item.artists[0].uri, playerState.item.uri)))
 
